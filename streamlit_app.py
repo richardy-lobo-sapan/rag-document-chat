@@ -1,18 +1,16 @@
 import os
 import streamlit as st
-from dotenv import load_dotenv
 import tempfile
+from dotenv import load_dotenv
 
 load_dotenv()
 
-# ── PAGE CONFIG ──────────────────────────────────────────────
 st.set_page_config(
-    page_title="DocChat — RAG System",
+    page_title="DocChat - RAG System",
     page_icon="📄",
     layout="centered"
 )
 
-# ── SESSION STATE ─────────────────────────────────────────────
 if "messages" not in st.session_state:
     st.session_state.messages = []
 if "qa_chain" not in st.session_state:
@@ -20,29 +18,24 @@ if "qa_chain" not in st.session_state:
 if "doc_name" not in st.session_state:
     st.session_state.doc_name = None
 
-# ── SIDEBAR ───────────────────────────────────────────────────
 with st.sidebar:
     st.title("📄 DocChat")
     st.caption("RAG-powered document Q&A")
     st.divider()
 
-    uploaded_file = st.file_uploader(
-        "Upload a PDF",
-        type="pdf"
-    )
+    uploaded_file = st.file_uploader("Upload a PDF", type="pdf")
 
     if uploaded_file and uploaded_file.name != st.session_state.doc_name:
         st.session_state.messages = []
         st.session_state.doc_name = uploaded_file.name
 
         try:
-            # Import heavy libraries only when needed
             from langchain_google_genai import ChatGoogleGenerativeAI
             from langchain_community.document_loaders import PyPDFLoader
             from langchain_text_splitters import RecursiveCharacterTextSplitter
             from langchain_community.vectorstores import Chroma
             from langchain.chains import RetrievalQA
-	    from langchain_core.embeddings import Embeddings
+            from langchain_core.embeddings import Embeddings
             from google import genai
             from typing import List
 
@@ -64,7 +57,6 @@ with st.sidebar:
                         model=self.model, contents=text)
                     return result.embeddings[0].values
 
-            # Save uploaded file temporarily
             with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
                 tmp.write(uploaded_file.read())
                 tmp_path = tmp.name
@@ -118,7 +110,6 @@ with st.sidebar:
     st.divider()
     st.caption("Built with LangChain + ChromaDB + Gemini")
 
-# ── MAIN CHAT ─────────────────────────────────────────────────
 st.title("📄 DocChat")
 st.caption("Upload a PDF and ask questions about it")
 st.divider()
