@@ -42,7 +42,7 @@ with st.sidebar:
             from langchain_text_splitters import RecursiveCharacterTextSplitter
             from langchain_community.vectorstores import Chroma
             from langchain.chains import RetrievalQA
-            from langchain.embeddings.base import Embeddings
+		from langchain_core.embeddings import Embeddings
             from google import genai
             from typing import List
 
