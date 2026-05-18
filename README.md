@@ -112,12 +112,14 @@ Get a free Gemini API key at: https://aistudio.google.com/apikey
 
 ## Project Structure
 
+```
 rag-document-chat/
 ├── rag.py              # Terminal version (core logic)
 ├── streamlit_app.py    # Browser UI with file upload
 ├── requirements.txt    # Dependencies
 ├── .env                # API key (not on GitHub)
 └── .gitignore          # Ignores venv, .env, chroma_db
+```
 
 ---
 
