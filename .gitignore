@@ -2,4 +2,7 @@ venv/
 .env
 __pycache__/
 *.pyc
-.chroma/
+chroma_db/
+test.py
+test_streamlit.py
+check_models.py
