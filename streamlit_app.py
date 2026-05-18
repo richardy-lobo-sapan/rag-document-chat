@@ -34,7 +34,6 @@ with st.sidebar:
             from langchain_community.document_loaders import PyPDFLoader
             from langchain_text_splitters import RecursiveCharacterTextSplitter
             from langchain_community.vectorstores import Chroma
-            from langchain.chains import RetrievalQA
             from langchain_core.embeddings import Embeddings
             from google import genai
             from typing import List
@@ -85,13 +84,7 @@ with st.sidebar:
                     temperature=0.3
                 )
                 retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
-                qa_chain = RetrievalQA.from_chain_type(
-                    llm=llm,
-                    chain_type="stuff",
-                    retriever=retriever,
-                    return_source_documents=True
-                )
-                st.session_state.qa_chain = qa_chain
+                st.session_state.qa_chain = {"llm": llm, "retriever": retriever}
 
             st.success(f"✅ {len(pages)} pages, {len(chunks)} chunks")
 
@@ -135,9 +128,12 @@ else:
         with st.chat_message("assistant"):
             with st.spinner("Searching document..."):
                 try:
-                    result = st.session_state.qa_chain.invoke({"query": prompt})
-                    answer = result["result"]
-                    sources = result["source_documents"]
+                    qa = st.session_state.qa_chain
+                    sources = qa["retriever"].invoke(prompt)
+                    context = "\n\n".join([doc.page_content for doc in sources])
+                    full_prompt = f"Answer the question using only the context below.\n\nContext:\n{context}\n\nQuestion: {prompt}"
+                    response = qa["llm"].invoke(full_prompt)
+                    answer = response.content
 
                     st.markdown(answer)
 
